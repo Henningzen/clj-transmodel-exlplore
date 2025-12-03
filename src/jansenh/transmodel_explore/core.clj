@@ -28,8 +28,9 @@
 ;; data files
 
 (comment
-  (def shared-data-file "/home/jansenh/data/rb_norway-aggregated-netex/_KOL_shared_data.xml")
-  (def line-data-file "/home/jansenh/data/rb_norway-aggregated-netex/KOL_KOL-Line-8_5986_1025_Fogn---Judaberg---Helgoy.xml")
+  (def shared-data-file "/home/jansenh/data/rb_norway-aggregated-netex/KOL/_KOL_shared_data.xml")
+  (def line-data-file "/home/jansenh/data/rb_norway-aggregated-netex/KOL/KOL_KOL-Line-8_5986_1025_Fogn---Judaberg---Helgoy.xml")
+  (def line-data-file "/home/jansenh/data/rb_norway-aggregated-netex/KOL/KOL_KOL-Line-8_5900_518_518.xml")
 
   ;; the data
 
@@ -122,7 +123,7 @@
 (comment ;; --------------------------------------------------------------------
 
   ;; Single day - multiple ways
-  (tt/timetable-for-date calendar-index journeys "2025-11-28")
+  (tt/timetable-for-date calendar-index journeys "2025-12-03")
   (tt/timetable-for-date calendar-index journeys (LocalDate/of 2025 11 28))
 
   ;; Convenience
@@ -130,17 +131,17 @@
   (tt/tomorrow calendar-index journeys)
 
   ;; Pretty print for traffic coordinator
-  (tt/print-daily-timetable calendar-index journeys "2025-11-28")
+  (tt/print-daily-timetable calendar-index journeys "2025-12-03")
 
   ;; Or get data for Tablecloth/notebook
-  (def monday-trips (tt/timetable-for-date calendar-index journeys "2025-12-01"))
+  (def monday-trips (tt/timetable-for-date calendar-index journeys "2025-12-03"))
   (count monday-trips)
 
   ;; Compare two days
   (let [mon (tt/timetable-for-date calendar-index journeys "2025-12-01")
-        sat (tt/timetable-for-date calendar-index journeys "2025-12-06")]
+        sat (tt/timetable-for-date calendar-index journeys "2025-12-03")]
     {:monday (count mon)
-     :saturday (count sat)})
+     :wednesday (count sat)})
   ;; ------------------------------------------------------------------> comment
   )
 
@@ -536,7 +537,12 @@
 
   ;; Check a service journey with times
   (let [sj (reg/service-journey "KOL:ServiceJourney:5986_250619122708623_4020")]
-    (clojure.pprint/pprint (:passing-times sj))))
+    (clojure.pprint/pprint (:passing-times sj)))
+
+  ;;
+  ;; ------------------------------------------------------------------> comment
+
+  )
 
 (comment
   (require '[jansenh.transmodel.parser.core :as parser])
@@ -550,7 +556,11 @@
         name-elem (u/find-child first-op (keyword "xmlns.http%3A%2F%2Fwww.netex.org.uk%2Fnetex" "Name"))
         _ (println "Name element:" name-elem)
         _ (println "Name element content:" (:content name-elem))]
-    nil))
+    nil)
+
+  ;;
+  ;; ------------------------------------------------------------------> comment
+  )
 
 (comment
   (reg/reset-registry!)
@@ -562,12 +572,19 @@
   ;; Check a stop point
   (reg/stop-point "KOL:ScheduledStopPoint:11416420_0")
 
+  (def service-journey "KOL:ServiceJourney:5900_250619122712490_1010")
+
   ;; Check an operator
   (reg/operator "KOL:Operator:316")
 
   ;; Check a service journey with times
-  (let [sj (reg/service-journey "KOL:ServiceJourney:5986_250619122708623_4020")]
-    (clojure.pprint/pprint (:passing-times sj))))
+  (let [sj (reg/service-journey "KOL:ServiceJourney:5900_250619122707475_1002")]
+    (clojure.pprint/pprint (:passing-times sj)))
+
+  ;;
+  ;; ------------------------------------------------------------------> comment
+  )
+
 
 (comment
   (require '[jansenh.transmodel.netex.interchanges :as interchanges])
@@ -577,12 +594,36 @@
 
   ;; Visualize a specific journey
   (interchanges/visualize-journey-interchanges
-   "KOL:ServiceJourney:5986_250619122708623_4020")
+   "KOL:ServiceJourney:5900_250619122707475_1002")
+  
+  ;; Visualize a specific journey
+  (interchanges/visualize-journey-interchanges
+   "KOL:ServiceJourney:5900_250619122707482_2002")
+
+
+  (do 
+    (let [sj (reg/service-journey "KOL:ServiceJourney:5900_250619122707475_1002")]
+      (clojure.pprint/pprint (:passing-times sj)))
+
+    (println "--------------------------------------------------------------------------------")
+
+    (let [sj (reg/service-journey "KOL:ServiceJourney:5900_250619122707482_2002")]
+      (clojure.pprint/pprint (:passing-times sj)))
+
+    )
+
   
   ;; Visualize all interchanges (first 5)
   (let [all-ic (reg/all-interchanges)]
-    (doseq [ic (take 5 all-ic)]
+    (doseq [ic (take 100 all-ic)]
       (interchanges/visualize-interchange ic)))
 
+
+
+  (let [sj (reg/service-journey "KOL:ServiceJourneyInterchange:3244")]
+    (clojure.pprint/pprint (:passing-times sj)))
+  
+  ;;
   ;; ------------------------------------------------------------------> comment
+  ;;
   )

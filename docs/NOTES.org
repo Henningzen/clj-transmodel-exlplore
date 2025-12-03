@@ -27,3 +27,10 @@ library.
 #+begin_src clojure
   {:deps org.scicloj/noj {:mvn/version "2-beta19.1"}}
 #+end_src
+
+
+* NeTEx data files
+
+https://storage.googleapis.com/marduk-production/outbound/timetable/netex/rb_kol-aggregated-netex.zip
+https://storage.googleapis.com/marduk-production/outbound/timetable/netex/rb_sky-aggregated-netex.zip
+https://storage.googleapis.com/marduk-production/outbound/timetable/netex/rb_sof-aggregated-netex.zip
